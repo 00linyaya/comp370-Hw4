@@ -1,5 +1,5 @@
 # HW4 Exploration: My Little Pony Dialog
-
+GitHub repo: https://github.com/00linyaya/comp370-Hw4
 All commands were run from the repository root on an Ubuntu EC2 instance, with the dataset at `data/clean_dialog.csv`.
 
 ## How big is the dataset?
@@ -48,7 +48,15 @@ Commands:
 ## Speaker frequency (Task 4)
 
 Script: `scripts/line_percentages.sh`, which produces `Line_percentages.csv`.
-
+    #!/bin/bash
+    f=data/clean_dialog.csv
+    total=$(( $(csvtool height "$f") - 1 ))
+    echo "pony_name,total_line_count,percent_all_lines" > Line_percentages.csv
+    for p in "Twilight Sparkle" "Rarity" "Pinkie Pie" "Rainbow Dash" "Fluttershy"; do
+      c=$(csvtool col 3 "$f" | grep -cx "$p")
+      pct=$(awk -v c="$c" -v t="$total" 'BEGIN{printf "%.2f", c/t*100}')
+      echo "$p,$c,$pct" >> Line_percentages.csv
+    done
 Each count uses an exact match on the speaker column:
 
     csvtool col 3 data/clean_dialog.csv | grep -cx "Twilight Sparkle"
